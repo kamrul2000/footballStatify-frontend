@@ -1,0 +1,18 @@
+<div class="container py-3">
+  <h2>Players</h2>
+  <a routerLink="/players/create" class="btn btn-primary mb-3">Add Player</a>
+  <table class="table table-striped">
+    <thead><tr><th>Name</th><th>Position</th><th>Age</th><th>Team</th><th></th></tr></thead>
+    <tbody>
+      <tr *ngFor="let p of players">
+        <td><a [routerLink]="['/players', p.id]">{{ p.name }}</a></td>
+        <td>{{ p.position }}</td>
+        <td>{{ p.age }}</td>
+        <td>{{ p.team?.name }}</td>
+        <td>
+          <button class="btn btn-sm btn-danger" (click)="delete(p.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
