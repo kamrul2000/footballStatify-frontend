@@ -1,29 +1,38 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from './api.service';
-import { Team } from '../models/team';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class TeamsService {
-  constructor(private api: ApiService) {}
+  private baseUrl = 'https://localhost:7286/api/Teams'; // replace with your API
 
-  getAll(): Observable<Team[]> {
-    return this.api.get<Team[]>('Teams');
+  constructor(private http: HttpClient) {}
+
+  getAllTeams(params?: any): Observable<any> {
+    let httpParams = new HttpParams();
+    if (params) {
+      Object.keys(params).forEach((key) => {
+        if (params[key] !== null && params[key] !== undefined) {
+          httpParams = httpParams.set(key, params[key]);
+        }
+      });
+    }
+    return this.http.get<any>(this.baseUrl, { params: httpParams });
   }
 
-  getById(id: number): Observable<Team> {
-    return this.api.get<Team>(`Teams/${id}`);
+  getTeamById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/${id}`);
   }
 
-  create(team: Partial<Team>): Observable<Team> {
-    return this.api.post<Team>('Teams', team);
+  addTeam(team: any): Observable<any> {
+    return this.http.post<any>(this.baseUrl, team);
   }
 
-  update(id: number, team: Team): Observable<void> {
-    return this.api.put<void>(`Teams/${id}`, team);
+  updateTeam(team: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/${team.id}`, team);
   }
 
-  delete(id: number): Observable<void> {
-    return this.api.delete<void>(`Teams/${id}`);
+  deleteTeam(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/${id}`);
   }
 }

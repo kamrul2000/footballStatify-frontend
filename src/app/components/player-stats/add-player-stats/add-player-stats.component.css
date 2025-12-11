@@ -1,0 +1,59 @@
+.container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+mat-card {
+  padding: 20px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 600px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat-icon {
+  margin-right: 8px;
+}
+
+.goals-icon {
+  color: #4caf50;
+}
+
+.assists-icon {
+  color: #2196f3;
+}
+
+.yellow-icon {
+  color: #ffc107;
+}
+
+.red-icon {
+  color: #f44336;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+mat-spinner {
+  display: inline-block;
+  margin-right: 8px;
+}

@@ -1,0 +1,56 @@
+.container {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h2 {
+  margin: 0;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.search-field {
+  width: 100%;
+  margin: 20px 0;
+}
+
+table {
+  width: 100%;
+  margin-top: 20px;
+}
+
+th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+.win {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.loss {
+  color: #f44336;
+  font-weight: 600;
+}
+
+.draw {
+  color: #ff9800;
+  font-weight: 600;
+}

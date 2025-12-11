@@ -1,0 +1,158 @@
+<div class="container">
+  <div class="welcome-section">
+    <h1>⚽ Football Manager Dashboard</h1>
+    <p>Welcome to your Football Management System</p>
+    <div class="quick-actions">
+      <button mat-raised-button color="primary" routerLink="/fixture-generator">
+        <mat-icon>event_note</mat-icon>
+        Generate Tournament Fixtures
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!isLoading">
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <mat-card class="stat-card teams-card">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>groups</mat-icon>
+          </div>
+          <div class="stat-details">
+            <div class="stat-value">{{stats.totalTeams}}</div>
+            <div class="stat-label">Teams</div>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button routerLink="/teams">View All</button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="stat-card players-card">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>sports_soccer</mat-icon>
+          </div>
+          <div class="stat-details">
+            <div class="stat-value">{{stats.totalPlayers}}</div>
+            <div class="stat-label">Players</div>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button routerLink="/players">View All</button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="stat-card matches-card">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>event</mat-icon>
+          </div>
+          <div class="stat-details">
+            <div class="stat-value">{{stats.totalMatches}}</div>
+            <div class="stat-label">Matches</div>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button routerLink="/matches">View All</button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="stat-card goals-card">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>sports_score</mat-icon>
+          </div>
+          <div class="stat-details">
+            <div class="stat-value">{{stats.totalGoals}}</div>
+            <div class="stat-label">Total Goals</div>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button routerLink="/player-stats">View Stats</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <!-- Recent Matches & Top Scorers -->
+    <div class="content-grid">
+      <!-- Recent Matches -->
+      <mat-card class="recent-matches">
+        <mat-card-header>
+          <mat-card-title>Recent Matches</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="recentMatches.length === 0" class="empty-state">
+            <mat-icon>event_busy</mat-icon>
+            <p>No matches yet</p>
+          </div>
+          <mat-list *ngIf="recentMatches.length > 0">
+            <mat-list-item *ngFor="let match of recentMatches">
+              <mat-icon matListItemIcon>event</mat-icon>
+              <div matListItemTitle>Match #{{match.id}}</div>
+              <div matListItemLine>
+                {{match.venue}} • {{match.matchDate | date: 'short'}}
+              </div>
+              <button mat-icon-button [routerLink]="['/matches', match.id]">
+                <mat-icon>arrow_forward</mat-icon>
+              </button>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Top Scorers -->
+      <mat-card class="top-scorers">
+        <mat-card-header>
+          <mat-card-title>Top Scorers</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="topScorers.length === 0" class="empty-state">
+            <mat-icon>sports_soccer</mat-icon>
+            <p>No goals scored yet</p>
+          </div>
+          <mat-list *ngIf="topScorers.length > 0">
+            <mat-list-item *ngFor="let scorer of topScorers; let i = index">
+              <div matListItemIcon class="rank-badge">{{i + 1}}</div>
+              <div matListItemTitle>Player #{{scorer.playerId}}</div>
+              <div matListItemLine class="goals-count">⚽ {{scorer.goals}} goals</div>
+              <button mat-icon-button [routerLink]="['/players', scorer.playerId]">
+                <mat-icon>arrow_forward</mat-icon>
+              </button>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Quick Actions -->
+    <mat-card class="quick-actions">
+      <mat-card-header>
+        <mat-card-title>Quick Actions</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="actions-grid">
+          <button mat-raised-button color="primary" routerLink="/teams/create">
+            <mat-icon>add</mat-icon> Add Team
+          </button>
+          <button mat-raised-button color="primary" routerLink="/players/create">
+            <mat-icon>add</mat-icon> Add Player
+          </button>
+          <button mat-raised-button color="primary" routerLink="/matches/create">
+            <mat-icon>add</mat-icon> Add Match
+          </button>
+          <button mat-raised-button color="accent" routerLink="/match-results/create">
+            <mat-icon>scoreboard</mat-icon> Add Result
+          </button>
+          <button mat-raised-button color="accent" routerLink="/player-stats/create">
+            <mat-icon>bar_chart</mat-icon> Add Stats
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

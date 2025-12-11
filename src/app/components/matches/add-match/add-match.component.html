@@ -1,31 +1,63 @@
-<div class="container mt-3">
-  <h2>Add Match</h2>
+<div class="container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ isEditMode ? 'Edit Match' : 'Add Match' }}</mat-card-title>
+    </mat-card-header>
 
-  <form [formGroup]="matchForm" (ngSubmit)="onSubmit()">
+    <mat-card-content>
+      <form [formGroup]="matchForm" (ngSubmit)="onSubmit()">
 
-    <div class="form-group mb-3">
-      <label>Team A ID</label>
-      <input type="number" class="form-control" formControlName="teamAId">
-    </div>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Home Team</mat-label>
+          <mat-select formControlName="homeTeamId">
+            <mat-option *ngFor="let team of teams" [value]="team.id">
+              {{team.teamName}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="matchForm.get('homeTeamId')?.hasError('required')">
+            Home team is required
+          </mat-error>
+        </mat-form-field>
 
-    <div class="form-group mb-3">
-      <label>Team B ID</label>
-      <input type="number" class="form-control" formControlName="teamBId">
-    </div>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Away Team</mat-label>
+          <mat-select formControlName="awayTeamId">
+            <mat-option *ngFor="let team of teams" [value]="team.id">
+              {{team.teamName}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="matchForm.get('awayTeamId')?.hasError('required')">
+            Away team is required
+          </mat-error>
+        </mat-form-field>
 
-    <div class="form-group mb-3">
-      <label>Match Date</label>
-      <input type="date" class="form-control" formControlName="matchDate">
-    </div>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Match Date</mat-label>
+          <input matInput type="datetime-local" formControlName="matchDate">
+          <mat-error *ngIf="matchForm.get('matchDate')?.hasError('required')">
+            Match date is required
+          </mat-error>
+        </mat-form-field>
 
-    <div class="form-group mb-3">
-      <label>Venue</label>
-      <input type="text" class="form-control" formControlName="venue">
-    </div>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Venue</mat-label>
+          <input matInput type="text" formControlName="venue" placeholder="Enter stadium/venue name">
+          <mat-error *ngIf="matchForm.get('venue')?.hasError('required')">
+            Venue is required
+          </mat-error>
+        </mat-form-field>
 
-    <button class="btn btn-primary" type="submit" [disabled]="matchForm.invalid">
-      Add Match
-    </button>
+        <div class="actions">
+          <button mat-raised-button type="button" (click)="cancel()">
+            Cancel
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="matchForm.invalid || isLoading">
+            <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+            <span *ngIf="!isLoading">{{ isEditMode ? 'Update Match' : 'Add Match' }}</span>
+          </button>
+        </div>
 
-  </form>
+      </form>
+    </mat-card-content>
+  </mat-card>
 </div>

@@ -1,0 +1,170 @@
+<div class="container">
+  <div *ngIf="isLoading" class="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!isLoading && team">
+    <!-- Header -->
+    <div class="header">
+      <button mat-icon-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2>Team Details</h2>
+      <div class="header-actions">
+        <button mat-raised-button color="accent" (click)="editTeam()">
+          <mat-icon>edit</mat-icon> Edit
+        </button>
+        <button mat-raised-button color="warn" (click)="deleteTeam()">
+          <mat-icon>delete</mat-icon> Delete
+        </button>
+      </div>
+    </div>
+
+    <!-- Team Info Card -->
+    <mat-card class="team-card">
+      <mat-card-header>
+        <div mat-card-avatar class="team-avatar">
+          <mat-icon class="avatar-icon">groups</mat-icon>
+        </div>
+        <mat-card-title>{{team.teamName}}</mat-card-title>
+        <mat-card-subtitle>
+          <div class="team-info">
+            <mat-icon>person</mat-icon>
+            <span>Coach: {{team.coach}}</span>
+          </div>
+          <div class="team-info">
+            <mat-icon>calendar_today</mat-icon>
+            <span>Founded: {{team.foundingYear || team.foundedYear}}</span>
+          </div>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <!-- Team Statistics -->
+        <div class="stats-overview">
+          <div class="stat-card">
+            <mat-icon class="stat-icon">sports_soccer</mat-icon>
+            <div class="stat-value">{{players.length}}</div>
+            <div class="stat-label">Players</div>
+          </div>
+
+          <div class="stat-card">
+            <mat-icon class="stat-icon">event</mat-icon>
+            <div class="stat-value">{{matches.length}}</div>
+            <div class="stat-label">Matches</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Players Section -->
+    <mat-card class="players-card">
+      <mat-card-header>
+        <mat-card-title>Squad</mat-card-title>
+        <button mat-raised-button color="primary" (click)="addPlayer()" class="add-btn">
+          <mat-icon>add</mat-icon> Add Player
+        </button>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="players.length === 0" class="no-data">
+          <mat-icon class="empty-icon">sports_soccer</mat-icon>
+          <p>No players in this team yet.</p>
+        </div>
+
+        <table mat-table [dataSource]="players" *ngIf="players.length > 0" class="mat-elevation-z2">
+          
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef> Name </th>
+            <td mat-cell *matCellDef="let player"> 
+              <div class="player-cell">
+                <mat-icon>person</mat-icon>
+                {{player.name}}
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="position">
+            <th mat-header-cell *matHeaderCellDef> Position </th>
+            <td mat-cell *matCellDef="let player"> 
+              <span class="position-badge">{{player.position}}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="jerseyNumber">
+            <th mat-header-cell *matHeaderCellDef> Jersey # </th>
+            <td mat-cell *matCellDef="let player"> 
+              <span class="jersey-number">#{{player.jerseyNumber}}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Actions </th>
+            <td mat-cell *matCellDef="let player">
+              <button mat-icon-button color="primary" (click)="viewPlayer(player)" matTooltip="View Profile">
+                <mat-icon>visibility</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="playersColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: playersColumns;"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Matches Section -->
+    <mat-card class="matches-card">
+      <mat-card-header>
+        <mat-card-title>Matches</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="matches.length === 0" class="no-data">
+          <mat-icon class="empty-icon">event</mat-icon>
+          <p>No matches scheduled yet.</p>
+        </div>
+
+        <table mat-table [dataSource]="matches" *ngIf="matches.length > 0" class="mat-elevation-z2">
+          
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef> Date </th>
+            <td mat-cell *matCellDef="let match"> 
+              <div class="date-cell">
+                <mat-icon>event</mat-icon>
+                {{match.matchDate | date: 'short'}}
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="opponent">
+            <th mat-header-cell *matHeaderCellDef> Opponent </th>
+            <td mat-cell *matCellDef="let match"> 
+              {{getOpponentName(match)}}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="venue">
+            <th mat-header-cell *matHeaderCellDef> Venue </th>
+            <td mat-cell *matCellDef="let match"> 
+              <div class="venue-cell">
+                <mat-icon>location_on</mat-icon>
+                {{match.venue}}
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Actions </th>
+            <td mat-cell *matCellDef="let match">
+              <button mat-icon-button color="primary" (click)="viewMatch(match)" matTooltip="View Details">
+                <mat-icon>visibility</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="matchesColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: matchesColumns;"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

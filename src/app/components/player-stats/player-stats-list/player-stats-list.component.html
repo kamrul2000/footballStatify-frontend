@@ -1,0 +1,100 @@
+<div class="container">
+  <div class="header">
+    <h2>Player Statistics</h2>
+    <button mat-raised-button color="primary" (click)="addStats()">
+      <mat-icon>add</mat-icon> Add Player Stats
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!isLoading && playerStats.length === 0" class="no-data">
+    <p>No player statistics found. Add your first player stats!</p>
+  </div>
+
+  <div *ngIf="!isLoading && playerStats.length > 0">
+    <!-- Search Field -->
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search Player Stats</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (ngModelChange)="applyFilter()" placeholder="Search by player, match, goals, or assists...">
+      <mat-icon matPrefix>search</mat-icon>
+      <button mat-icon-button matSuffix *ngIf="searchTerm" (click)="searchTerm=''; applyFilter()">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <table mat-table [dataSource]="filteredPlayerStats" class="mat-elevation-z8">
+    
+    <!-- Serial Number Column -->
+    <ng-container matColumnDef="serialNo">
+      <th mat-header-cell *matHeaderCellDef> # </th>
+      <td mat-cell *matCellDef="let stat; let i = index"> {{i + 1}} </td>
+    </ng-container>
+
+    <!-- Player Column -->
+    <ng-container matColumnDef="player">
+      <th mat-header-cell *matHeaderCellDef> Player </th>
+      <td mat-cell *matCellDef="let stat"> Player #{{stat.playerId}} </td>
+    </ng-container>
+
+    <!-- Match Column -->
+    <ng-container matColumnDef="match">
+      <th mat-header-cell *matHeaderCellDef> Match </th>
+      <td mat-cell *matCellDef="let stat"> Match #{{stat.matchId}} </td>
+    </ng-container>
+
+    <!-- Goals Column -->
+    <ng-container matColumnDef="goals">
+      <th mat-header-cell *matHeaderCellDef> Goals </th>
+      <td mat-cell *matCellDef="let stat"> 
+        <span class="stat-badge goals">{{stat.goals}}</span>
+      </td>
+    </ng-container>
+
+    <!-- Assists Column -->
+    <ng-container matColumnDef="assists">
+      <th mat-header-cell *matHeaderCellDef> Assists </th>
+      <td mat-cell *matCellDef="let stat"> 
+        <span class="stat-badge assists">{{stat.assists}}</span>
+      </td>
+    </ng-container>
+
+    <!-- Yellow Cards Column -->
+    <ng-container matColumnDef="yellowCards">
+      <th mat-header-cell *matHeaderCellDef> Yellow Cards </th>
+      <td mat-cell *matCellDef="let stat"> 
+        <span class="stat-badge yellow">{{stat.yellowCards}}</span>
+      </td>
+    </ng-container>
+
+    <!-- Red Cards Column -->
+    <ng-container matColumnDef="redCards">
+      <th mat-header-cell *matHeaderCellDef> Red Cards </th>
+      <td mat-cell *matCellDef="let stat"> 
+        <span class="stat-badge red">{{stat.redCards}}</span>
+      </td>
+    </ng-container>
+
+    <!-- Actions Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let stat">
+        <button mat-icon-button color="primary" (click)="viewStats(stat)" matTooltip="View Details">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button color="accent" (click)="editStats(stat)" matTooltip="Edit">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteStat(stat)" matTooltip="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  </div>
+</div>

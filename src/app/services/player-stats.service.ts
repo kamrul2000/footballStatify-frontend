@@ -19,6 +19,10 @@ export class PlayerStatsService {
     return this.api.post<PlayerStat>('PlayerStats', stat);
   }
 
+  update(id: number, stat: Partial<PlayerStat>) {
+    return this.api.put<void>(`PlayerStats/${id}`, stat);
+  }
+
   delete(id: number) {
     return this.api.delete<void>(`PlayerStats/${id}`);
   }

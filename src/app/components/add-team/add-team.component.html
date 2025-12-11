@@ -1,26 +1,36 @@
-<div class="container mt-3">
-  <h2>Add Team</h2>
+<mat-card class="container mt-3" style="max-width: 500px; margin: auto;">
+  <h2 mat-card-title>Add Team</h2>
 
-<form [formGroup]="teamForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="teamForm" (ngSubmit)="onSubmit()">
 
-    <div class="form-group mb-3">
-      <label>Team Name</label>
-      <input type="text" class="form-control" formControlName="teamName">
-    </div>
+    <mat-form-field appearance="outline" class="w-100 mb-3">
+      <mat-label>Team Name</mat-label>
+      <input matInput formControlName="teamName">
+      <mat-error *ngIf="teamForm.get('teamName')?.hasError('required')">
+        Team Name is required
+      </mat-error>
+    </mat-form-field>
 
-    <div class="form-group mb-3">
-      <label>Coach</label>
-      <input type="text" class="form-control" formControlName="coach">
-    </div>
+    <mat-form-field appearance="outline" class="w-100 mb-3">
+      <mat-label>Coach</mat-label>
+      <input matInput formControlName="coach">
+      <mat-error *ngIf="teamForm.get('coach')?.hasError('required')">
+        Coach is required
+      </mat-error>
+    </mat-form-field>
 
-    <!-- <div class="form-group mb-3">
-      <label>Founded Year</label>
-      <input type="number" class="form-control" formControlName="foundedYear">
-    </div> -->
+    <mat-form-field appearance="outline" class="w-100 mb-3">
+      <mat-label>Founded Year</mat-label>
+      <input type="number" matInput formControlName="foundedYear">
+      <mat-error *ngIf="teamForm.get('foundedYear')?.hasError('required')">
+        Founded Year is required
+      </mat-error>
+    </mat-form-field>
 
-    <button class="btn btn-primary" type="submit" [disabled]="teamForm.invalid">
-      Add Team
-    </button>
+   <button mat-raised-button color="primary" type="submit" [disabled]="teamForm.invalid">
+  {{ isEditMode ? 'Update Team' : 'Add Team' }}
+</button>
+
 
   </form>
-</div>
+</mat-card>

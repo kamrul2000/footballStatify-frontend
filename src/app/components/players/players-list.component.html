@@ -1,18 +1,97 @@
-<div class="container py-3">
-  <h2>Players</h2>
-  <a routerLink="/players/create" class="btn btn-primary mb-3">Add Player</a>
-  <table class="table table-striped">
-    <thead><tr><th>Name</th><th>Position</th><th>Age</th><th>Team</th><th></th></tr></thead>
-    <tbody>
-      <tr *ngFor="let p of players">
-        <td><a [routerLink]="['/players', p.id]">{{ p.name }}</a></td>
-        <td>{{ p.position }}</td>
-        <td>{{ p.age }}</td>
-        <td>{{ p.team?.name }}</td>
-        <td>
-          <button class="btn btn-sm btn-danger" (click)="delete(p.id)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
+<div class="container">
+  <div class="header">
+    <h2>Players</h2>
+    <button mat-raised-button color="primary" routerLink="/players/create">
+      <mat-icon>add</mat-icon> Add Player
+    </button>
+  </div>
+
+  <!-- Search Bar -->
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Search players</mat-label>
+    <input matInput [(ngModel)]="searchTerm" (ngModelChange)="applyFilter()" placeholder="Search by name or position...">
+    <mat-icon matPrefix>search</mat-icon>
+    <button mat-icon-button matSuffix *ngIf="searchTerm" (click)="searchTerm=''; applyFilter()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <div *ngIf="loading" class="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <p>{{error}}</p>
+  </div>
+
+  <div *ngIf="!loading && !error && filteredPlayers.length === 0 && !searchTerm" class="no-data">
+    <p>No players found. Create your first player!</p>
+  </div>
+
+  <div *ngIf="!loading && !error && filteredPlayers.length === 0 && searchTerm" class="no-data">
+    <p>No players found matching "{{searchTerm}}"</p>
+  </div>
+
+  <table mat-table [dataSource]="filteredPlayers" *ngIf="!loading && !error && filteredPlayers.length > 0" class="mat-elevation-z8">
+    
+    <!-- Serial Number Column -->
+    <ng-container matColumnDef="serialNo">
+      <th mat-header-cell *matHeaderCellDef> # </th>
+      <td mat-cell *matCellDef="let player; let i = index"> {{i + 1}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let player"> 
+        <div class="player-cell">
+          <mat-icon>person</mat-icon>
+          {{player.name}}
+        </div>
+      </td>
+    </ng-container>
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef> Position </th>
+      <td mat-cell *matCellDef="let player"> 
+        <span class="position-badge">{{player.position}}</span>
+      </td>
+    </ng-container>
+
+    <!-- Jersey Number Column -->
+    <ng-container matColumnDef="jerseyNumber">
+      <th mat-header-cell *matHeaderCellDef> Jersey # </th>
+      <td mat-cell *matCellDef="let player"> 
+        <span class="jersey-number">#{{player.jerseyNumber}}</span>
+      </td>
+    </ng-container>
+
+    <!-- Team Column -->
+    <ng-container matColumnDef="team">
+      <th mat-header-cell *matHeaderCellDef> Team </th>
+      <td mat-cell *matCellDef="let player"> 
+        Team #{{player.teamId}}
+      </td>
+    </ng-container>
+
+    <!-- Actions Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let player">
+        <button mat-icon-button color="primary" [routerLink]="['/players', player.id]" matTooltip="View Profile">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button color="accent" [routerLink]="['/players/edit', player.id]" matTooltip="Edit">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="delete(player.id)" matTooltip="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 </div>

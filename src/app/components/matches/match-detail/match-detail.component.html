@@ -1,0 +1,124 @@
+<div class="container">
+  <div *ngIf="isLoading" class="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!isLoading && match">
+    <!-- Header -->
+    <div class="header">
+      <button mat-icon-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2>Match Details</h2>
+      <button mat-raised-button color="warn" (click)="deleteMatch()">
+        <mat-icon>delete</mat-icon> Delete Match
+      </button>
+    </div>
+
+    <!-- Match Info Card -->
+    <mat-card class="match-card">
+      <mat-card-header>
+        <mat-card-title>
+          <div class="teams-header">
+            <span class="team-name">{{homeTeam?.teamName || 'Team ' + match.homeTeamId}}</span>
+            <span class="vs">VS</span>
+            <span class="team-name">{{awayTeam?.teamName || 'Team ' + match.awayTeamId}}</span>
+          </div>
+        </mat-card-title>
+        <mat-card-subtitle>
+          <div class="match-info">
+            <mat-icon>event</mat-icon> {{match.matchDate | date: 'full'}}
+          </div>
+          <div class="match-info">
+            <mat-icon>location_on</mat-icon> {{match.venue}}
+          </div>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <!-- Match Result -->
+        <div *ngIf="matchResult" class="result-section">
+          <h3>Final Score</h3>
+          <div class="score-display">
+            <div class="team-score">
+              <div class="score-number">{{matchResult.homeScore}}</div>
+              <div class="score-label">{{homeTeam?.teamName || 'Home'}}</div>
+            </div>
+            <div class="separator">-</div>
+            <div class="team-score">
+              <div class="score-number">{{matchResult.awayScore}}</div>
+              <div class="score-label">{{awayTeam?.teamName || 'Away'}}</div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="!matchResult" class="no-result">
+          <p>No result recorded for this match yet.</p>
+          <button mat-raised-button color="primary" (click)="addResult()">
+            <mat-icon>add</mat-icon> Add Result
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Player Statistics -->
+    <mat-card class="stats-card">
+      <mat-card-header>
+        <mat-card-title>Player Statistics</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="playerStats.length === 0" class="no-stats">
+          <p>No player statistics recorded yet.</p>
+          <button mat-raised-button color="primary" (click)="addPlayerStats()">
+            <mat-icon>add</mat-icon> Add Player Stats
+          </button>
+        </div>
+
+        <table mat-table [dataSource]="playerStats" *ngIf="playerStats.length > 0" class="mat-elevation-z2">
+          
+          <ng-container matColumnDef="player">
+            <th mat-header-cell *matHeaderCellDef> Player </th>
+            <td mat-cell *matCellDef="let stat"> Player #{{stat.playerId}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="goals">
+            <th mat-header-cell *matHeaderCellDef> Goals </th>
+            <td mat-cell *matCellDef="let stat"> 
+              <span class="stat-badge goals">⚽ {{stat.goals}}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="assists">
+            <th mat-header-cell *matHeaderCellDef> Assists </th>
+            <td mat-cell *matCellDef="let stat"> 
+              <span class="stat-badge assists">🤝 {{stat.assists}}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="yellowCards">
+            <th mat-header-cell *matHeaderCellDef> Yellow Cards </th>
+            <td mat-cell *matCellDef="let stat"> 
+              <span class="stat-badge yellow" *ngIf="stat.yellowCards > 0">🟨 {{stat.yellowCards}}</span>
+              <span *ngIf="stat.yellowCards === 0">-</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="redCards">
+            <th mat-header-cell *matHeaderCellDef> Red Cards </th>
+            <td mat-cell *matCellDef="let stat"> 
+              <span class="stat-badge red" *ngIf="stat.redCards > 0">🟥 {{stat.redCards}}</span>
+              <span *ngIf="stat.redCards === 0">-</span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <button mat-raised-button color="accent" (click)="addPlayerStats()" *ngIf="playerStats.length > 0" class="add-stats-btn">
+          <mat-icon>add</mat-icon> Add More Stats
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

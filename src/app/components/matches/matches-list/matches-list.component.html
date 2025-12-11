@@ -1,0 +1,82 @@
+<div class="container">
+  <div class="header">
+    <h2>Matches</h2>
+    <button mat-raised-button color="primary" (click)="addMatch()">
+      <mat-icon>add</mat-icon> Add Match
+    </button>
+  </div>
+
+  <!-- Search Bar -->
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Search matches</mat-label>
+    <input matInput [(ngModel)]="searchTerm" (ngModelChange)="applyFilter()" placeholder="Search by venue or date...">
+    <mat-icon matPrefix>search</mat-icon>
+    <button mat-icon-button matSuffix *ngIf="searchTerm" (click)="searchTerm=''; applyFilter()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <div *ngIf="isLoading" class="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!isLoading && filteredMatches.length === 0 && !searchTerm" class="no-data">
+    <p>No matches found. Create your first match!</p>
+  </div>
+
+  <div *ngIf="!isLoading && filteredMatches.length === 0 && searchTerm" class="no-data">
+    <p>No matches found matching "{{searchTerm}}"</p>
+  </div>
+
+  <table mat-table [dataSource]="filteredMatches" *ngIf="!isLoading && filteredMatches.length > 0" class="mat-elevation-z8">
+    
+    <!-- Serial Number Column -->
+    <ng-container matColumnDef="serialNo">
+      <th mat-header-cell *matHeaderCellDef> # </th>
+      <td mat-cell *matCellDef="let match; let i = index"> {{i + 1}} </td>
+    </ng-container>
+
+    <!-- Home Team Column -->
+    <ng-container matColumnDef="homeTeam">
+      <th mat-header-cell *matHeaderCellDef> Home Team </th>
+      <td mat-cell *matCellDef="let match"> {{match.homeTeamId}} </td>
+    </ng-container>
+
+    <!-- Away Team Column -->
+    <ng-container matColumnDef="awayTeam">
+      <th mat-header-cell *matHeaderCellDef> Away Team </th>
+      <td mat-cell *matCellDef="let match"> {{match.awayTeamId}} </td>
+    </ng-container>
+
+    <!-- Match Date Column -->
+    <ng-container matColumnDef="matchDate">
+      <th mat-header-cell *matHeaderCellDef> Match Date </th>
+      <td mat-cell *matCellDef="let match"> {{match.matchDate | date: 'short'}} </td>
+    </ng-container>
+
+    <!-- Venue Column -->
+    <ng-container matColumnDef="venue">
+      <th mat-header-cell *matHeaderCellDef> Venue </th>
+      <td mat-cell *matCellDef="let match"> {{match.venue}} </td>
+    </ng-container>
+
+    <!-- Actions Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let match">
+        <button mat-icon-button color="primary" (click)="viewMatch(match)" matTooltip="View Details">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button color="accent" (click)="editMatch(match)" matTooltip="Edit">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteMatch(match)" matTooltip="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
