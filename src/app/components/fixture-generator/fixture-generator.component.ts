@@ -1,20 +1,37 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { FixtureGeneratorService } from '../../services/fixture-generator.service';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FixtureGeneratorService, Fixture } from '../../services/fixture-generator.service';
 import { TeamsService } from '../../services/teams.service';
 import { MatchesService } from '../../services/matches.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-
-// Import the Fixture interface from the service
-import { Fixture } from '../../services/fixture-generator.service';
-import { MatCard, MatCardHeader, MatCardTitle, MatCardContent }MatCardContent } from "@angular/material/card";
-import { MatIconModule } from "@angular/material/icon";
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { CommonModule } from '@angular/common'; // <-- Add this import
 
 @Component({
   selector: 'app-fixture-generator',
   templateUrl: './fixture-generator.component.html',
-  imports: [MatCard, MatCardHeader, MatCardTitle, MatIconModule, MatCardContent]
+  styleUrls: ['./fixture-generator.component.css'],
+  // If you use standalone: true, add imports here, otherwise remove this line
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSelectModule,
+    MatProgressSpinnerModule,
+    ReactiveFormsModule,
+    FormsModule,
+  ]
 })
 export class FixtureGeneratorComponent implements OnInit {
   generatorForm!: FormGroup;
