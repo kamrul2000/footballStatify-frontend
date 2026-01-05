@@ -9,7 +9,6 @@
 
     <mat-card-content>
       <form [formGroup]="generatorForm">
-        
         <!-- Tournament Type -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Tournament Type</mat-label>
@@ -107,51 +106,36 @@
     </mat-card-header>
 
     <mat-card-content>
-      <div *ngFor="let group of getGroupedFixtures() | keyvalue" class="group-section">
-        <h3 class="group-title">
-          <mat-icon>group_work</mat-icon>
-          {{ group.key === 'Main' ? 'Tournament Fixtures' : 'Group ' + group.key }}
-        </h3>
-
-        <div *ngFor="let round of getRoundGroupedFixtures(group.value) | keyvalue" class="round-section">
-          <h4 class="round-title">Round {{ round.key }}</h4>
-          
-          <div class="fixtures-grid">
-            <mat-card *ngFor="let fixture of round.value" class="fixture-card">
-              <div class="fixture-header">
-                <span class="fixture-date">
-                  <mat-icon>calendar_today</mat-icon>
-                  {{ fixture.date | date: 'MMM d, y' }}
-                </span>
-                <span class="fixture-time">
-                  <mat-icon>schedule</mat-icon>
-                  {{ fixture.date | date: 'shortTime' }}
-                </span>
-              </div>
-              
-              <div class="match-info">
-                <div class="team home-team">
-                  <mat-icon>home</mat-icon>
-                  <span class="team-name">{{ fixture.homeTeam.name }}</span>
-                </div>
-                
-                <div class="vs-divider">
-                  <span>VS</span>
-                </div>
-                
-                <div class="team away-team">
-                  <span class="team-name">{{ fixture.awayTeam.name }}</span>
-                  <mat-icon>flight_takeoff</mat-icon>
-                </div>
-              </div>
-              
-              <div class="fixture-footer">
-                <mat-icon>location_on</mat-icon>
-                <span>{{ fixture.venue }}</span>
-              </div>
-            </mat-card>
+      <div class="fixtures-grid">
+        <mat-card *ngFor="let fixture of generatedFixtures" class="fixture-card">
+          <div class="fixture-header">
+            <span class="fixture-date">
+              <mat-icon>calendar_today</mat-icon>
+              {{ fixture.matchDate | date: 'MMM d, y' }}
+            </span>
+            <span class="fixture-time">
+              <mat-icon>schedule</mat-icon>
+              {{ fixture.matchDate | date: 'shortTime' }}
+            </span>
           </div>
-        </div>
+          <div class="match-info">
+            <div class="team home-team">
+              <mat-icon>home</mat-icon>
+              <span class="team-name">{{ getTeamNameById(fixture.teamAId) }}</span>
+            </div>
+            <div class="vs-divider">
+              <span>VS</span>
+            </div>
+            <div class="team away-team">
+              <span class="team-name">{{ getTeamNameById(fixture.teamBId) }}</span>
+              <mat-icon>flight_takeoff</mat-icon>
+            </div>
+          </div>
+          <div class="fixture-footer">
+            <mat-icon>location_on</mat-icon>
+            <span>{{ fixture.venue }}</span>
+          </div>
+        </mat-card>
       </div>
     </mat-card-content>
   </mat-card>

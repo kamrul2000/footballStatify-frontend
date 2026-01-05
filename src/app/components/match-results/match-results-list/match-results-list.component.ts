@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 export class MatchResultsListComponent implements OnInit {
   matchResults: MatchResult[] = [];
   filteredMatchResults: MatchResult[] = [];
-  displayedColumns: string[] = ['serialNo', 'match', 'homeScore', 'awayScore', 'winner', 'actions'];
+  displayedColumns: string[] = ['serialNo', 'match', 'teamA', 'teamB', 'teamAGoals', 'teamBGoals', 'winner', 'actions'];
   isLoading = false;
   searchTerm: string = '';
 

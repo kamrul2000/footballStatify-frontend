@@ -18,6 +18,7 @@ export class AddMatchResultComponent implements OnInit {
   isEditMode = false;
   resultId?: number;
 
+
   constructor(
     private fb: FormBuilder,
     private matchResultsSvc: MatchResultsService,
@@ -30,8 +31,8 @@ export class AddMatchResultComponent implements OnInit {
   ngOnInit(): void {
     this.resultForm = this.fb.group({
       matchId: ['', Validators.required],
-      homeScore: [0, [Validators.required, Validators.min(0)]],
-      awayScore: [0, [Validators.required, Validators.min(0)]]
+      teamAGoals: [0, [Validators.required, Validators.min(0)]],
+      teamBGoals: [0, [Validators.required, Validators.min(0)]]
     });
 
     this.route.params.subscribe(params => {
@@ -63,8 +64,8 @@ export class AddMatchResultComponent implements OnInit {
       next: (result) => {
         this.resultForm.patchValue({
           matchId: result.matchId,
-          homeScore: result.homeScore,
-          awayScore: result.awayScore
+          teamAGoals: result.teamAGoals,
+          teamBGoals: result.teamBGoals
         });
       },
       error: () => {

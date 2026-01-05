@@ -19,25 +19,26 @@
           </mat-error>
         </mat-form-field>
 
+
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Home Team Score</mat-label>
-          <input matInput type="number" formControlName="homeScore" min="0">
-          <mat-error *ngIf="resultForm.get('homeScore')?.hasError('required')">
-            Home score is required
+          <mat-label>Team A Goals</mat-label>
+          <input matInput type="number" formControlName="teamAGoals" min="0">
+          <mat-error *ngIf="resultForm.get('teamAGoals')?.hasError('required')">
+            Team A goals are required
           </mat-error>
-          <mat-error *ngIf="resultForm.get('homeScore')?.hasError('min')">
-            Score cannot be negative
+          <mat-error *ngIf="resultForm.get('teamAGoals')?.hasError('min')">
+            Goals cannot be negative
           </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Away Team Score</mat-label>
-          <input matInput type="number" formControlName="awayScore" min="0">
-          <mat-error *ngIf="resultForm.get('awayScore')?.hasError('required')">
-            Away score is required
+          <mat-label>Team B Goals</mat-label>
+          <input matInput type="number" formControlName="teamBGoals" min="0">
+          <mat-error *ngIf="resultForm.get('teamBGoals')?.hasError('required')">
+            Team B goals are required
           </mat-error>
-          <mat-error *ngIf="resultForm.get('awayScore')?.hasError('min')">
-            Score cannot be negative
+          <mat-error *ngIf="resultForm.get('teamBGoals')?.hasError('min')">
+            Goals cannot be negative
           </mat-error>
         </mat-form-field>
 

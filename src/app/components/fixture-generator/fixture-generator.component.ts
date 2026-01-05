@@ -1,16 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
-import { FixtureGeneratorService, Fixture, Team } from '../../services/fixture-generator.service';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { FixtureGeneratorService } from '../../services/fixture-generator.service';
 import { TeamsService } from '../../services/teams.service';
 import { MatchesService } from '../../services/matches.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
+// Import the Fixture interface from the service
+import { Fixture } from '../../services/fixture-generator.service';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent }MatCardContent } from "@angular/material/card";
+import { MatIconModule } from "@angular/material/icon";
+
 @Component({
   selector: 'app-fixture-generator',
-  standalone: false,
   templateUrl: './fixture-generator.component.html',
-  styleUrls: ['./fixture-generator.component.css']
+  imports: [MatCard, MatCardHeader, MatCardTitle, MatIconModule, MatCardContent]
 })
 export class FixtureGeneratorComponent implements OnInit {
   generatorForm!: FormGroup;
@@ -50,7 +54,6 @@ export class FixtureGeneratorComponent implements OnInit {
       venues: this.fb.array([this.createVenueControl()])
     });
 
-    // Watch tournament type changes
     this.generatorForm.get('tournamentType')?.valueChanges.subscribe(type => {
       if (type === 'multiple') {
         this.generatorForm.get('numberOfGroups')?.enable();
@@ -99,66 +102,55 @@ export class FixtureGeneratorComponent implements OnInit {
 
     this.isGenerating = true;
     const formValue = this.generatorForm.value;
-    
-    // Prepare teams
-    const selectedTeamIds = formValue.selectedTeams;
-    const teams: Team[] = this.availableTeams
-      .filter(t => selectedTeamIds.includes(t.id))
-      .map(t => ({ id: t.id, name: t.name }));
 
-    if (teams.length < 2) {
-      this.snackBar.open('Please select at least 2 teams', 'Close', { duration: 3000 });
-      this.isGenerating = false;
-      return;
-    }
+    const payload = {
+      teamIds: formValue.selectedTeams,
+      matchesPerDay: formValue.matchesPerDay,
+      tournamentStartDate: new Date(formValue.startDate).toISOString(),
+      firstMatchStartTime: "10:00:00",
+      matchDuration: "02:00:00",
+      venues: formValue.venues.map((v: any) => v.name).filter((v: string) => v.trim() !== ''),
+      tournamentType: formValue.tournamentType === 'single' ? 1 : formValue.tournamentType === 'multiple' ? 2 : 3,
+      teamsPerGroup: formValue.numberOfGroups || 3
+    };
 
-    // Prepare venues
-    const venues = formValue.venues.map((v: any) => v.name).filter((v: string) => v.trim() !== '');
-    
-    if (venues.length === 0) {
-      this.snackBar.open('Please add at least one venue', 'Close', { duration: 3000 });
-      this.isGenerating = false;
-      return;
-    }
-
-    const startDate = new Date(formValue.startDate);
-    const matchesPerDay = formValue.matchesPerDay;
-
-    // Generate fixtures based on tournament type
-    try {
-      switch (formValue.tournamentType) {
-        case 'single':
-          this.generatedFixtures = this.fixtureGenerator.generateRoundRobin(
-            teams, startDate, venues, matchesPerDay
-          );
-          break;
-        case 'multiple':
-          this.generatedFixtures = this.fixtureGenerator.generateGroupStage(
-            teams, formValue.numberOfGroups, startDate, venues, matchesPerDay
-          );
-          break;
-        case 'knockout':
-          this.generatedFixtures = this.fixtureGenerator.generateKnockout(
-            teams, startDate, venues
-          );
-          break;
+    this.fixtureGenerator.generateFixtures(payload).subscribe({
+      next: (fixtures) => {
+        this.generatedFixtures = fixtures;
+        this.showFixtures = true;
+        this.snackBar.open(`${fixtures.length} fixtures generated successfully!`, 'Close', { duration: 2000 });
+      },
+      error: () => {
+        this.snackBar.open('Failed to generate fixtures', 'Close', { duration: 3000 });
+      },
+      complete: () => {
+        this.isGenerating = false;
       }
+    });
+  }
 
-      this.showFixtures = true;
-      this.snackBar.open(
-        `${this.generatedFixtures.length} fixtures generated successfully!`,
-        'Close',
-        { duration: 2000 }
-      );
-    } catch (error) {
-      this.snackBar.open('Failed to generate fixtures', 'Close', { duration: 3000 });
-    } finally {
-      this.isGenerating = false;
-    }
+  getTeamNameById(id: number): string {
+    const team = this.availableTeams.find(t => t.id === id);
+    return team ? team.name : `Team ${id}`;
+  }
+
+  reset() {
+    this.generatedFixtures = [];
+    this.showFixtures = false;
+    this.generatorForm.reset({
+      tournamentType: 'single',
+      numberOfGroups: 2,
+      selectedTeams: [],
+      startDate: new Date().toISOString().split('T')[0],
+      matchesPerDay: 2
+    });
+    this.venues.clear();
+    this.addVenue();
   }
 
   saveFixtures() {
     if (this.generatedFixtures.length === 0) {
+      this.snackBar.open('No fixtures to save.', 'Close', { duration: 2000 });
       return;
     }
 
@@ -166,12 +158,11 @@ export class FixtureGeneratorComponent implements OnInit {
     let savedCount = 0;
     let errorCount = 0;
 
-    // Save each fixture as a match
     this.generatedFixtures.forEach((fixture, index) => {
       const matchData = {
-        homeTeamId: fixture.homeTeam.id,
-        awayTeamId: fixture.awayTeam.id,
-        matchDate: fixture.date.toISOString(),
+        homeTeamId: fixture.teamAId,
+        awayTeamId: fixture.teamBId,
+        matchDate: fixture.matchDate,
         venue: fixture.venue
       };
 
@@ -208,46 +199,5 @@ export class FixtureGeneratorComponent implements OnInit {
         { duration: 4000 }
       );
     }
-  }
-
-  reset() {
-    this.generatedFixtures = [];
-    this.showFixtures = false;
-    this.generatorForm.reset({
-      tournamentType: 'single',
-      numberOfGroups: 2,
-      selectedTeams: [],
-      startDate: new Date().toISOString().split('T')[0],
-      matchesPerDay: 2
-    });
-    this.venues.clear();
-    this.addVenue();
-  }
-
-  getGroupedFixtures(): Map<string, Fixture[]> {
-    const grouped = new Map<string, Fixture[]>();
-    
-    this.generatedFixtures.forEach(fixture => {
-      const key = fixture.group || 'Main';
-      if (!grouped.has(key)) {
-        grouped.set(key, []);
-      }
-      grouped.get(key)!.push(fixture);
-    });
-
-    return grouped;
-  }
-
-  getRoundGroupedFixtures(fixtures: Fixture[]): Map<number, Fixture[]> {
-    const grouped = new Map<number, Fixture[]>();
-    
-    fixtures.forEach(fixture => {
-      if (!grouped.has(fixture.round)) {
-        grouped.set(fixture.round, []);
-      }
-      grouped.get(fixture.round)!.push(fixture);
-    });
-
-    return grouped;
   }
 }

@@ -20,7 +20,6 @@ import { MatchDetailComponent } from './components/matches/match-detail/match-de
 import { PlayerDetailComponent } from './components/players/player-detail/player-detail.component';
 import { TeamDetailComponent } from './components/teams/team-detail/team-detail.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { FixtureGeneratorComponent } from './components/fixture-generator/fixture-generator.component';
 
 // 🟢 Import Angular Material Modules
 import { MatCardModule } from '@angular/material/card';
@@ -39,6 +38,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { FixtureGeneratorComponent } from './components/fixture-generator/fixture-generator.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -57,7 +57,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     PlayerDetailComponent,
     TeamDetailComponent,
     DashboardComponent,
-    FixtureGeneratorComponent
+    
   ],
   imports: [
     BrowserModule,
@@ -82,7 +82,8 @@ MatDatepickerModule,
     MatProgressSpinnerModule,
     MatSelectModule,
     MatSnackBarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    FixtureGeneratorComponent
   ],
   providers: [],
   bootstrap: [AppComponent],

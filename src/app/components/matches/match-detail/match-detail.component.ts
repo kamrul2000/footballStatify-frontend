@@ -5,8 +5,8 @@ import { MatchResultsService } from '../../../services/match-results.service';
 import { PlayerStatsService } from '../../../services/player-stats.service';
 import { TeamsService } from '../../../services/teams.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Team } from '../../../services/fixture-generator.service';
 import { Player } from '../../../models/player';
+import { Team } from '../../../models/team';
 
 @Component({
   selector: 'app-match-detail',

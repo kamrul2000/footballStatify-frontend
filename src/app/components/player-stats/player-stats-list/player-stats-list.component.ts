@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 export class PlayerStatsListComponent implements OnInit {
   playerStats: PlayerStat[] = [];
   filteredPlayerStats: PlayerStat[] = [];
-  displayedColumns: string[] = ['serialNo', 'player', 'match', 'goals', 'assists', 'yellowCards', 'redCards', 'actions'];
+  displayedColumns: string[] = ['serialNo', 'player', 'match', 'goals', 'assists', 'yellowCards', 'redCards']
   isLoading = false;
   searchTerm: string = '';
 
@@ -74,9 +74,11 @@ export class PlayerStatsListComponent implements OnInit {
       this.filteredPlayerStats = this.playerStats;
     } else {
       this.filteredPlayerStats = this.playerStats.filter(stat =>
-        stat.playerId.toString().includes(term) ||
-        stat.matchId.toString().includes(term) ||
-        stat.goals.toString().includes(term)
+       stat.playerId.toString().includes(term) ||
+      stat.player?.name?.toLowerCase().includes(term) ||
+      stat.matchId.toString().includes(term) ||
+      stat.match?.title?.toLowerCase().includes(term) ||
+      stat.goals?.toString().includes(term) 
       );
     }
   }
