@@ -17,7 +17,7 @@ export class TeamDetailComponent implements OnInit {
   players: any[] = [];
   matches: any[] = [];
   isLoading = false;
-  playersColumns: string[] = ['name', 'position', 'jerseyNumber', 'actions'];
+  playersColumns: string[] = ['name', 'position', 'actions'];
   matchesColumns: string[] = ['date', 'opponent', 'venue', 'actions'];
 
   constructor(

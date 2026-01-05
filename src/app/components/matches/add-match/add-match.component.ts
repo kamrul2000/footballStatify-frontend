@@ -29,9 +29,11 @@ export class AddMatchComponent implements OnInit {
 
   ngOnInit(): void {
     this.matchForm = this.fb.group({
-      homeTeamId: ['', Validators.required],
-      awayTeamId: ['', Validators.required],
+      title: ['', Validators.required],
+      TeamAId: ['', Validators.required],
+      TeamBId: ['', Validators.required],
       matchDate: ['', Validators.required],
+      matchTime: [''],
       venue: ['', Validators.required]
     });
 
@@ -63,11 +65,13 @@ export class AddMatchComponent implements OnInit {
     this.matchesSvc.getById(this.matchId).subscribe({
       next: (match) => {
         this.matchForm.patchValue({
-          homeTeamId: match.homeTeamId,
-          awayTeamId: match.awayTeamId,
-          matchDate: match.matchDate,
-          venue: match.venue
-        });
+  title: match.title,
+  TeamAId: match.teamAId,
+  TeamBId: match.teamBId,
+  matchDate: new Date(match.matchDate),
+  venue: match.venue
+});
+
       },
       error: () => {
         this.snackBar.open('Failed to load match', 'Close', { duration: 3000 });
@@ -76,36 +80,60 @@ export class AddMatchComponent implements OnInit {
     });
   }
 
-  onSubmit() {
-    if (this.matchForm.invalid) return;
+onSubmit() {
+  if (this.matchForm.invalid) return;
 
-    this.isLoading = true;
-    const matchData = this.matchForm.value;
+  this.isLoading = true;
 
-    if (this.isEditMode && this.matchId) {
-      this.matchesSvc.update(this.matchId, matchData).subscribe({
-        next: () => {
-          this.snackBar.open('Match updated successfully', 'Close', { duration: 2000 });
-          this.router.navigate(['/matches']);
-        },
-        error: () => {
-          this.isLoading = false;
-          this.snackBar.open('Failed to update match', 'Close', { duration: 3000 });
-        }
-      });
-    } else {
-      this.matchesSvc.create(matchData).subscribe({
-        next: () => {
-          this.snackBar.open('Match created successfully', 'Close', { duration: 2000 });
-          this.router.navigate(['/matches']);
-        },
-        error: () => {
-          this.isLoading = false;
-          this.snackBar.open('Failed to create match', 'Close', { duration: 3000 });
-        }
-      });
-    }
+  const date: Date = new Date(this.matchForm.value.matchDate);
+  const time = this.matchForm.value.matchTime;
+
+  if (time) {
+    const [hours, minutes] = time.split(':');
+    date.setHours(+hours, +minutes, 0, 0);
   }
+
+  const teamA = this.teams.find(t => t.id === this.matchForm.value.TeamAId);
+  const teamB = this.teams.find(t => t.id === this.matchForm.value.TeamBId);
+
+  const payload = {
+    id: this.matchId ?? 0,
+    title: this.matchForm.value.title,
+    teamAId: this.matchForm.value.TeamAId,
+    teamBId: this.matchForm.value.TeamBId,
+    teamA: teamA,
+    teamB: teamB,
+    matchDate: date.toISOString(),
+    venue: this.matchForm.value.venue,
+    homeTeamId: this.matchForm.value.TeamAId,
+    awayTeamId: this.matchForm.value.TeamBId
+  };
+
+  if (this.isEditMode && this.matchId) {
+    this.matchesSvc.update(this.matchId, payload).subscribe({
+      next: () => {
+        this.snackBar.open('Match updated successfully', 'Close', { duration: 2000 });
+        this.router.navigate(['/matches']);
+      },
+      error: () => {
+        this.isLoading = false;
+        this.snackBar.open('Failed to update match', 'Close', { duration: 3000 });
+      }
+    });
+  } else {
+    this.matchesSvc.create(payload).subscribe({
+      next: () => {
+        this.snackBar.open('Match created successfully', 'Close', { duration: 2000 });
+        this.router.navigate(['/matches']);
+      },
+      error: () => {
+        this.isLoading = false;
+        this.snackBar.open('Failed to create match', 'Close', { duration: 3000 });
+      }
+    });
+  }
+}
+
 
   cancel() {
     this.router.navigate(['/matches']);

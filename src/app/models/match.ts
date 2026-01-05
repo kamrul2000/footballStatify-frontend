@@ -1,5 +1,7 @@
 import { Team } from './team';
 export interface Match {
+  teamBId: any;
+  teamAId: any;
   id: number;
   title?: string;
   homeTeamId: number;

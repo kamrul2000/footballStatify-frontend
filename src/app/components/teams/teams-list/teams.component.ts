@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatTableDataSource } from '@angular/material/table';
 import { TeamsService } from '../../../services/teams.service';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
@@ -10,10 +8,10 @@ import { Router } from '@angular/router';
   selector: 'app-teams',
   standalone: false,
   templateUrl: './teams.component.html',
+  styleUrls: ['./teams-list.css']
 })
 export class TeamsComponent implements OnInit {
   teamForm: FormGroup;
-  dataSource = new MatTableDataSource<any>();
   displayedColumns: string[] = ['serialNo', 'teamName', 'coach', 'foundingYear', 'actions'];
   isLoading = false;
   isEditMode = false;
@@ -21,6 +19,7 @@ export class TeamsComponent implements OnInit {
   teams: any[] = [];
   filteredTeams: any[] = [];
   searchTerm: string = '';
+  error: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -41,15 +40,16 @@ export class TeamsComponent implements OnInit {
 
   loadTeams() {
     this.isLoading = true;
+    this.error = '';
     this.teamsSvc.getAllTeams().subscribe({
       next: (res) => {
         this.teams = res;
         this.filteredTeams = res;
-        this.dataSource.data = this.filteredTeams;
         this.isLoading = false;
       },
-      error: () => {
+      error: (err) => {
         this.isLoading = false;
+        this.error = 'Failed to load teams';
         this.snackBar.open('Failed to load teams', 'Close', { duration: 3000 });
       }
     });
@@ -62,7 +62,7 @@ export class TeamsComponent implements OnInit {
 
     if (this.isEditMode && this.currentTeamId) {
       teamData.id = this.currentTeamId;
-      this.teamsSvc.updateTeam(teamData).subscribe({
+      this.teamsSvc.updateTeam(teamData,).subscribe({
         next: () => {
           this.snackBar.open('Team updated successfully', 'Close', { duration: 2000 });
           this.resetForm();
@@ -95,7 +95,7 @@ export class TeamsComponent implements OnInit {
   }
 
   deleteTeam(team: any) {
-    if (confirm(`Are you sure you want to delete "${team.teamName}"?`)) {
+    if (confirm(`Are you sure you want to delete "${team.name}"?`)) {
       this.teamsSvc.deleteTeam(team.id).subscribe({
         next: () => {
           this.snackBar.open('Team deleted successfully', 'Close', { duration: 2000 });
@@ -108,9 +108,9 @@ export class TeamsComponent implements OnInit {
     }
   }
 
-addTeam() {
-  this.router.navigateByUrl('/team');
-}
+  addTeam() {
+    this.router.navigateByUrl('/team');
+  }
 
   applyFilter() {
     const term = this.searchTerm.toLowerCase().trim();
@@ -122,7 +122,6 @@ addTeam() {
         team.coach.toLowerCase().includes(term)
       );
     }
-    this.dataSource.data = this.filteredTeams;
   }
 
   resetForm() {

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PlayersService } from '../../services/players.service';
 import { Player } from '../../models/player';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { TeamsService } from '../../services/teams.service';
 @Component({
   selector: 'app-players-list',
   templateUrl: './players-list.component.html',
@@ -13,20 +13,31 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class PlayersListComponent implements OnInit {
   players: Player[] = [];
   filteredPlayers: Player[] = [];
-  displayedColumns: string[] = ['serialNo', 'name', 'position', 'jerseyNumber', 'team', 'actions'];
+  displayedColumns: string[] = ['serialNo', 'name', 'position', 'team', 'actions'];
   loading = false;
   error = '';
   searchTerm: string = '';
+teams: any[] = [];
 
   constructor(
     private playersSvc: PlayersService,
+    private teamsSvc: TeamsService,
     private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
     this.load();
+    this.loadTeams();
   }
-
+ 
+  loadTeams() {
+    this.teamsSvc.getAllTeams().subscribe({
+      next: (data: any) => this.teams = data,
+      error: (err) => {
+        this.snackBar.open('Failed to load teams', 'Close', { duration: 3000 });
+      }
+    });
+  }
   load() {
     this.loading = true;
     this.playersSvc.getAll().subscribe({
@@ -55,6 +66,10 @@ export class PlayersListComponent implements OnInit {
       player.position?.toLowerCase().includes(term)
     );
   }
+getTeamName(teamId: number): string {
+  const team = this.teams.find(t => t.id === teamId);
+  return team ? team.name : 'Unknown';
+}
 
   delete(id: number) {
     if (!confirm('Delete player?')) return;

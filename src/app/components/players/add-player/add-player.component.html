@@ -29,21 +29,10 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Jersey Number</mat-label>
-          <input matInput type="number" formControlName="jerseyNumber" min="1" max="99">
-          <mat-error *ngIf="form.get('jerseyNumber')?.hasError('required')">
-            Jersey number is required
-          </mat-error>
-          <mat-error *ngIf="form.get('jerseyNumber')?.hasError('min') || form.get('jerseyNumber')?.hasError('max')">
-            Jersey number must be between 1 and 99
-          </mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
           <mat-label>Team</mat-label>
           <mat-select formControlName="teamId">
             <mat-option value="">Select Team</mat-option>
-            <mat-option *ngFor="let t of teams" [value]="t.id">{{ t.teamName }}</mat-option>
+            <mat-option *ngFor="let t of teams" [value]="t.id">{{ t.name }}</mat-option>
           </mat-select>
           <mat-error *ngIf="form.get('teamId')?.hasError('required')">
             Team is required

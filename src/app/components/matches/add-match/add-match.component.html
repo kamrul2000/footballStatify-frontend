@@ -6,38 +6,61 @@
 
     <mat-card-content>
       <form [formGroup]="matchForm" (ngSubmit)="onSubmit()">
+ <mat-form-field appearance="outline" class="full-width">
+          <mat-label><Title></Title></mat-label>
+          <input matInput type="text" formControlName="title" placeholder="Enter match title">
+          <mat-error *ngIf="matchForm.get('title')?.hasError('required')">
+            Title is required
+          </mat-error>
+        </mat-form-field>
+
+
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Home Team</mat-label>
-          <mat-select formControlName="homeTeamId">
+          <mat-select formControlName="TeamAId">
             <mat-option *ngFor="let team of teams" [value]="team.id">
-              {{team.teamName}}
+              {{team.name}}
             </mat-option>
           </mat-select>
-          <mat-error *ngIf="matchForm.get('homeTeamId')?.hasError('required')">
+          <mat-error *ngIf="matchForm.get('TeamAId')?.hasError('required')">
             Home team is required
           </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Away Team</mat-label>
-          <mat-select formControlName="awayTeamId">
+          <mat-select formControlName="TeamBId">
             <mat-option *ngFor="let team of teams" [value]="team.id">
-              {{team.teamName}}
+              {{team.name}}
             </mat-option>
           </mat-select>
-          <mat-error *ngIf="matchForm.get('awayTeamId')?.hasError('required')">
+          <mat-error *ngIf="matchForm.get('TeamBId')?.hasError('required')">
             Away team is required
           </mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Match Date</mat-label>
-          <input matInput type="datetime-local" formControlName="matchDate">
-          <mat-error *ngIf="matchForm.get('matchDate')?.hasError('required')">
-            Match date is required
-          </mat-error>
-        </mat-form-field>
+       <mat-form-field appearance="outline" class="full-width">
+  <mat-label>Match Date</mat-label>
+  <input
+    matInput
+    [matDatepicker]="picker"
+    formControlName="matchDate"
+    placeholder="Select date"
+  />
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker #picker></mat-datepicker>
+
+  <mat-error *ngIf="matchForm.get('matchDate')?.hasError('required')">
+    Match date is required
+  </mat-error>
+</mat-form-field>
+
+<mat-form-field appearance="outline" class="full-width">
+  <mat-label>Match Time</mat-label>
+  <input matInput type="time" formControlName="matchTime" />
+</mat-form-field>
+
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Venue</mat-label>

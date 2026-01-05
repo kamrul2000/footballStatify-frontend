@@ -3,6 +3,8 @@ import { MatchesService } from '../../../services/matches.service';
 import { Match } from '../../../models/match';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { TeamsService } from '../../../services/teams.service';
+import { Team } from '../../../models/team';
 
 @Component({
   selector: 'app-matches-list',
@@ -16,15 +18,34 @@ export class MatchesListComponent implements OnInit {
   displayedColumns: string[] = ['serialNo', 'homeTeam', 'awayTeam', 'matchDate', 'venue', 'actions'];
   isLoading = false;
   searchTerm: string = '';
+  teamsMap: { [id: number]: Team } = {};
 
   constructor(
     private matchesSvc: MatchesService,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private teamsSvc: TeamsService
   ) {}
 
   ngOnInit(): void {
-    this.loadMatches();
+    this.loadTeamsAndMatches();
+  }
+
+  loadTeamsAndMatches() {
+    this.teamsSvc.getAllTeams().subscribe({
+      next: (teams) => {
+        if (Array.isArray(teams)) {
+          teams.forEach((team: Team) => {
+            this.teamsMap[team.id] = team;
+          });
+        }
+        this.loadMatches();
+      },
+      error: () => {
+        this.snackBar.open('Failed to load teams', 'Close', { duration: 3000 });
+        this.loadMatches();
+      }
+    });
   }
 
   loadMatches() {
@@ -40,6 +61,10 @@ export class MatchesListComponent implements OnInit {
         this.snackBar.open('Failed to load matches', 'Close', { duration: 3000 });
       }
     });
+  }
+
+  getTeamNameById(id: number): string {
+    return this.teamsMap[id]?.name || id.toString();
   }
 
   applyFilter() {

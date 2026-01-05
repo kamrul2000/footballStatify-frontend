@@ -5,6 +5,8 @@ import { MatchResultsService } from '../../../services/match-results.service';
 import { PlayerStatsService } from '../../../services/player-stats.service';
 import { TeamsService } from '../../../services/teams.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Team } from '../../../services/fixture-generator.service';
+import { Player } from '../../../models/player';
 
 @Component({
   selector: 'app-match-detail',
@@ -17,9 +19,12 @@ export class MatchDetailComponent implements OnInit {
   match: any;
   matchResult: any;
   playerStats: any[] = [];
-  homeTeam: any;
-  awayTeam: any;
+  teamAId: any;
+  teamBId: any;
   isLoading = false;
+  teamsMap: { [id: number]: Team } = {};
+  playersMap: { [id: number]: Player } = {};  
+  
   displayedColumns: string[] = ['player', 'goals', 'assists', 'yellowCards', 'redCards'];
 
   constructor(
@@ -46,6 +51,7 @@ export class MatchDetailComponent implements OnInit {
         this.loadTeams();
         this.loadMatchResult();
         this.loadPlayerStats();
+
       },
       error: () => {
         this.isLoading = false;
@@ -56,16 +62,22 @@ export class MatchDetailComponent implements OnInit {
   }
 
   loadTeams() {
-    if (this.match.homeTeamId) {
-      this.teamsSvc.getTeamById(this.match.homeTeamId).subscribe({
-        next: (team) => this.homeTeam = team,
+    if (this.match.teamAId) {
+      this.teamsSvc.getTeamById(this.match.teamAId).subscribe({
+        next: (team) => {
+          this.teamAId = team;
+          this.teamsMap[this.match.teamAId] = team; // Add to teamsMap
+        },
         error: () => {}
       });
     }
     
     if (this.match.awayTeamId) {
-      this.teamsSvc.getTeamById(this.match.awayTeamId).subscribe({
-        next: (team) => this.awayTeam = team,
+      this.teamsSvc.getTeamById(this.match.teamBId).subscribe({
+        next: (team) => {
+          this.teamBId = team;
+          this.teamsMap[this.match.teamBId] = team; 
+        },
         error: () => {}
       });
     }
@@ -105,7 +117,9 @@ export class MatchDetailComponent implements OnInit {
       });
     }
   }
-
+getTeamNameById(id: number): string {
+    return this.teamsMap[id]?.name || id.toString();
+  }
   addResult() {
     this.router.navigate(['/match-results/create'], { queryParams: { matchId: this.matchId } });
   }

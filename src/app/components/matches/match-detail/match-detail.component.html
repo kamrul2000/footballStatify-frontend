@@ -20,9 +20,9 @@
       <mat-card-header>
         <mat-card-title>
           <div class="teams-header">
-            <span class="team-name">{{homeTeam?.teamName || 'Team ' + match.homeTeamId}}</span>
+            <span class="team-name">{{getTeamNameById(match.teamAId)}}</span>
             <span class="vs">VS</span>
-            <span class="team-name">{{awayTeam?.teamName || 'Team ' + match.awayTeamId}}</span>
+            <span class="team-name">{{getTeamNameById(match.teamBId)}}</span>
           </div>
         </mat-card-title>
         <mat-card-subtitle>
@@ -42,12 +42,12 @@
           <div class="score-display">
             <div class="team-score">
               <div class="score-number">{{matchResult.homeScore}}</div>
-              <div class="score-label">{{homeTeam?.teamName || 'Home'}}</div>
+              <div class="score-label">{{getTeamNameById(match.teamAId)}}</div>
             </div>
             <div class="separator">-</div>
             <div class="team-score">
               <div class="score-number">{{matchResult.awayScore}}</div>
-              <div class="score-label">{{awayTeam?.teamName || 'Away'}}</div>
+              <div class="score-label">{{getTeamNameById(match.teamBId)}}</div>
             </div>
           </div>
         </div>
@@ -78,8 +78,10 @@
           
           <ng-container matColumnDef="player">
             <th mat-header-cell *matHeaderCellDef> Player </th>
-            <td mat-cell *matCellDef="let stat"> Player #{{stat.playerId}} </td>
-          </ng-container>
+<td mat-cell *matCellDef="let stat">
+  <!-- {{ getPlayerNameById(stat.player.name) }} -->
+     {{ stat.player?.name}}
+</td>          </ng-container>
 
           <ng-container matColumnDef="goals">
             <th mat-header-cell *matHeaderCellDef> Goals </th>

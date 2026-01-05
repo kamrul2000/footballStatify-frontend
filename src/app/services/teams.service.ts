@@ -28,9 +28,13 @@ export class TeamsService {
     return this.http.post<any>(this.baseUrl, team);
   }
 
-  updateTeam(team: any): Observable<any> {
-    return this.http.put<any>(`${this.baseUrl}/${team.id}`, team);
-  }
+updateTeam(team: any): Observable<any> {
+  return this.http.put(
+    `${this.baseUrl}/${team.id}`,
+    team
+  );
+}
+
 
   deleteTeam(id: number): Observable<any> {
     return this.http.delete<any>(`${this.baseUrl}/${id}`);

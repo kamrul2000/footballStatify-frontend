@@ -33,14 +33,12 @@ export class AddPlayerComponent implements OnInit {
     this.initForm();
     this.loadTeams();
     
-    // Check for ID in route for edit
     this.playerId = this.route.snapshot.params['id'] ? +this.route.snapshot.params['id'] : null;
     if (this.playerId) {
       this.isEditMode = true;
       this.loadPlayer();
     }
     
-    // Check for teamId in query params (from team detail page)
     const teamId = this.route.snapshot.queryParams['teamId'];
     if (teamId) {
       this.form.patchValue({ teamId: +teamId });
@@ -51,7 +49,6 @@ export class AddPlayerComponent implements OnInit {
     this.form = this.fb.group({
       name: ['', Validators.required],
       position: ['', Validators.required],
-      jerseyNumber: ['', [Validators.required, Validators.min(1), Validators.max(99)]],
       teamId: ['', Validators.required]
     });
   }
@@ -71,7 +68,6 @@ export class AddPlayerComponent implements OnInit {
         this.form.patchValue({
           name: player.name,
           position: player.position,
-          jerseyNumber: player.jerseyNumber,
           teamId: player.teamId
         });
       },
@@ -87,19 +83,29 @@ export class AddPlayerComponent implements OnInit {
 
     this.loading = true;
     
-    if (this.isEditMode && this.playerId) {
-      this.playersSvc.update(this.playerId, this.form.value).subscribe({
-        next: () => {
-          this.snackBar.open('Player updated successfully!', 'Close', { duration: 2000 });
-          this.router.navigate(['/players']);
-        },
-        error: () => {
-          this.snackBar.open('Failed to update player', 'Close', { duration: 3000 });
-          this.loading = false;
-        }
-      });
-    } else {
-      this.playersSvc.create(this.form.value).subscribe({
+  if (this.isEditMode && this.playerId) {
+  const payload = {
+    id: this.playerId,
+    age: this.form.value.age,
+    name: this.form.value.name,
+    position: this.form.value.position,
+    teamId: this.form.value.teamId
+  };
+
+  this.playersSvc.update(this.playerId, payload).subscribe({
+    next: () => {
+      this.snackBar.open('Player updated successfully!', 'Close', { duration: 2000 });
+      this.router.navigate(['/players']);
+    },
+    error: (err) => {
+      console.error(err);
+      this.snackBar.open('Failed to update player', 'Close', { duration: 3000 });
+      this.loading = false;
+    }
+  });
+}
+ else {
+  this.playersSvc.create(this.form.value).subscribe({
         next: () => {
           this.snackBar.open('Player added successfully!', 'Close', { duration: 2000 });
           this.router.navigate(['/players']);
